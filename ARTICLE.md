@@ -341,7 +341,7 @@ class FakeEmailProvider implements IEmailProvider {
     }
 
     public wasEmailSentToRecipient = (recipient: string) =>
-        new Boolean(this.emailRecipients.find(r => r === recipient);
+        new Boolean(this.emailRecipients.find(r => r === recipient));
 }
 ```
 Notice that both fakes implement the same interfaces that `UserService` expects its dependencies to honor. Now, we can pass these fakes into `UserService` instead of the real classes and `UserService` will be none the wiser, it'll use them just as if they were the real deal. The reason it can do that is because it knows that all of the methods and properties it wants to use on its dependencies do indeed exist and are indeed accessible (because they implement the interfaces), which is all `UserService` needs to know (i.e, not how the dependencies work).
