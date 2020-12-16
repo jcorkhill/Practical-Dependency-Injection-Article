@@ -147,7 +147,7 @@ class UserService {
         this.sendGridEmailProvider = new SendGridEmailProvider();
     }
 
-    public async registerUser(dto: RegisterUserDto): Promise<void> {
+    public async registerUser(dto: IRegisterUserDto): Promise<void> {
         // User object & validation
         const user = User.fromDto(dto);
         
