@@ -438,16 +438,16 @@ These examples are relatively simple, but when things get more complex, being ab
 So far, throughout the article, we've worked exclusively with classes and injected the dependencies through the constructor. If you're taking a functional approach to development and wish not to use classes, one can still obtain the benefits of dependency injection using function arguments. For example, our `UserService` class above could be refactored into:
 
 ```typescript
-async function makeUserService(
+function makeUserService(
     userRepository: IUserRepository,
     emailProvider: IEmailProvider
 ): IUserService {
     return {
-        registerUser: dto => {
+        registerUser: async dto => {
             // ...
         },
 
-        findUserById: id => userRepository.findById(id)
+        findUserById: id => userRepository.findUserById(id)
     }
 }
 ```
