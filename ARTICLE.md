@@ -403,8 +403,8 @@ test('should reject with a DuplicateEmailError if an email already exists', asyn
     await fakeUserRepository.addUser(existingUser);
 
     // Act, Assert
-    await expect(() => userService.registerUser(dto))
-        .rejects.toBeInstanceOf(new DuplicateEmailError());
+    await expect(userService.registerUser(dto))
+        .rejects.toBeInstanceOf(DuplicateEmailError);
 
     expect(fakeUserRepository.getPersistedUserCount()).toBe(1);
 });
