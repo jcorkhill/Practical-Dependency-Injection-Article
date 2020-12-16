@@ -110,7 +110,7 @@ class UserService {
 
     public async findUserById(id: string): Promise<User> {
         // No need for await here, the promise will be unwrapped by the caller.
-        return this.userRepository.findById(id);
+        return this.userRepository.findUserById(id);
     }
 }
 ```
@@ -162,7 +162,7 @@ class UserService {
     }
 
     public async findUserById(id: string): Promise<UserDto> {
-        return this.userRepository.findById(id);
+        return this.userRepository.findUserById(id);
     }
 }
 ```
@@ -204,7 +204,7 @@ class UserService {
     }
 
     public async findUserById(id: string): Promise<UserDto> {
-        return this.userRepository.findById(id);
+        return this.userRepository.findUserById(id);
     }
 }
 ```
@@ -224,7 +224,7 @@ import { dbDriver } from 'pg-driver';
 export interface IUserRepository {
     addUser(user: User): Promise<void>;
     findUserById(id: string): Promise<User>;
-    existsByEmail(email: string): Promise<bool>;
+    existsByEmail(email: string): Promise<boolean>;
 }
 
 export class UserRepository implements IUserRepository {
@@ -295,7 +295,7 @@ class UserService {
     }
 
     public async findUserById(id: string): Promise<User> {
-        return this.userRepository.findById(id);
+        return this.userRepository.findUserById(id);
     }
 }
 ```
