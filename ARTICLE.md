@@ -297,7 +297,7 @@ class UserService {
     }
 }
 ```
-What we've done here is force the various components of our system to *depend on abstractions* and not concrete implementations. It is a common and well-regarded principle of software design to code against interfaces (abstractions) and not implementations. In doing so, you're given the freedom to swap out implementations as you please, for those implementations are hidden behind the interface, and so the business logic that uses the dependency never has to change so long as the interface never changes.
+It is a common and well-regarded principle of software design to code against interfaces (abstractions) and not implementations, which is what we've done here. In doing so, we're given the freedom to swap out implementations as we please, for those implementations are hidden behind the interface, and so the business logic that uses the dependency never has to change so long as the interface never changes.
 
 If we decide tomorrow that we want to rely on MailChimp for emails, we simply create a new MailChimp class that honors the `IEmailProvider` interface and inject it in instead of SendGrid. The actual `UserService` class never ever has to change even though we've just made a ginormous change to our system by switching to a new email provider. The beauty of these patterns is that `UserService` remains blissfully unaware of how the dependencies it uses work behind the scenes. The interface serves as the architectural boundary between both components, keeping them appropriately decoupled.
 
