@@ -203,7 +203,7 @@ class UserService {
         await this.sendGridEmailProvider.sendWelcomeEmail(user.email);
     }
 
-    public async findUserById(id: string): Promise<UserDto> {
+    public async findUserById(id: string): Promise<User> {
         return this.userRepository.findUserById(id);
     }
 }
