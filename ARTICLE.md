@@ -102,7 +102,7 @@ class UserService {
             return Promise.reject(new DuplicateEmailError());
             
         // Database persistence
-        await this.userRepository.add(user);
+        await this.userRepository.addUser(user);
         
         // Send a welcome email
         // ...
