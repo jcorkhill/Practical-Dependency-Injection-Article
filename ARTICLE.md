@@ -13,14 +13,14 @@ The simplest way to explain the concept is to show you. This is **not** dependen
 import { Engine } from './Engine';
 
 class Car {
-	private engine: Engine;
+    private engine: Engine;
 
-	public constructor () {
-		this.engine = new Engine();
-	}
+    public constructor () {
+        this.engine = new Engine();
+    }
 
     public startEngine(): void {
-		this.engine.fireCylinders();
+        this.engine.fireCylinders();
     }
 }
 ```
@@ -30,14 +30,14 @@ And this **is** dependency injection:
 import { Engine } from './Engine';
 
 class Car {
-	private engine: Engine;
+    private engine: Engine;
 
-	public constructor (engine: Engine) {
-		this.engine = engine;
-	}
-	
-	public startEngine(): void {
-		this.engine.fireCylinders();
+    public constructor (engine: Engine) {
+        this.engine = engine;
+    }
+    
+    public startEngine(): void {
+        this.engine.fireCylinders();
     }
 }
 ```
@@ -64,17 +64,17 @@ To begin, suppose you've been tasked with building two classes - an email provid
 import { dbDriver } from 'pg-driver';
 
 export class UserRepository {
-	public async addUser(user: User): Promise<void> {
-		// ... dbDriver.save(...)
-	}
+    public async addUser(user: User): Promise<void> {
+        // ... dbDriver.save(...)
+    }
 
-	public async findUserById(id: string): Promise<User> {
-		// ... dbDriver.query(...)
-	}
-	
-	public async existsByEmail(email: string): Promise<boolean> {
-		// ... dbDriver.save(...)
-	}
+    public async findUserById(id: string): Promise<User> {
+        // ... dbDriver.query(...)
+    }
+    
+    public async existsByEmail(email: string): Promise<boolean> {
+        // ... dbDriver.save(...)
+    }
 }
 ```
 ***Note:** The name "Repository" here comes from the "Repository Pattern", a method of decoupling your database from your business logic. You can learn more about the Repository Pattern, but for the purposes of this article, you can simply consider it to be some class that encapsulates away your database so that, to business logic, your data storage system is treated as merely an in-memory collection. Explaining the Repository Pattern fully is outside the purview of this article.*
@@ -91,27 +91,27 @@ class UserService {
     
     public constructor () {
         // Not dependency injection
-	    this.userRepository = new UserRepository();
+        this.userRepository = new UserRepository();
     }
 
-	public async registerUser(dto: IRegisterUserDto): Promise<void> {
-		// User object & validation
-		const user = User.fromDto(dto);
+    public async registerUser(dto: IRegisterUserDto): Promise<void> {
+        // User object & validation
+        const user = User.fromDto(dto);
 
-		if (await this.userRepository.existsByEmail(dto.email))
-			return Promise.reject(new DuplicateEmailError());
-			
-		// Database persistence
-		await this.userRepository.add(user);
-		
-		// Send a welcome email
-		// ...
-	}
+        if (await this.userRepository.existsByEmail(dto.email))
+            return Promise.reject(new DuplicateEmailError());
+            
+        // Database persistence
+        await this.userRepository.add(user);
+        
+        // Send a welcome email
+        // ...
+    }
 
-	public async findUserById(id: string): Promise<User> {
-		// No need for await here, the promise will be unwrapped by the caller.
-		return this.userRepository.findById(id);
-	}
+    public async findUserById(id: string): Promise<User> {
+        // No need for await here, the promise will be unwrapped by the caller.
+        return this.userRepository.findById(id);
+    }
 }
 ```
 Once again, all remains normal.
@@ -127,8 +127,8 @@ import { sendMail } from 'sendgrid';
 
 export class SendGridEmailProvider {
     public async sendWelcomeEmail(to: string): Promise<void> {
-		// ... await sendMail(...);
-	}
+        // ... await sendMail(...);
+    }
 }
 ```
 Within `UserService`:
@@ -138,32 +138,32 @@ import { UserRepository }  from  './UserRepository.ts';
 import { SendGridEmailProvider } from './SendGridEmailProvider.ts';
 
 class UserService {
-	private readonly userRepository: UserRepository;
-	private readonly sendGridEmailProvider: SendGridEmailProvider;
+    private readonly userRepository: UserRepository;
+    private readonly sendGridEmailProvider: SendGridEmailProvider;
 
     public constructor () {
-	    // Still not doing dependency injection
-	    this.userRepository = new UserRepository();
-	    this.sendGridEmailProvider = new SendGridEmailProvider();
+        // Still not doing dependency injection
+        this.userRepository = new UserRepository();
+        this.sendGridEmailProvider = new SendGridEmailProvider();
     }
 
-	public async registerUser(dto: RegisterUserDto): Promise<void> {
-		// User object & validation
-		const user = User.fromDto(dto);
-		
-		if (await this.userRepository.existsByEmail(dto.email))
-			return Promise.reject(new DuplicateEmailError());
-		
-		// Database persistence
-		await this.userRepository.add(user);
-		
-		// Send welcome email
-		await this.sendGridEmailProvider.sendWelcomeEmail(user.email);
-	}
+    public async registerUser(dto: RegisterUserDto): Promise<void> {
+        // User object & validation
+        const user = User.fromDto(dto);
+        
+        if (await this.userRepository.existsByEmail(dto.email))
+            return Promise.reject(new DuplicateEmailError());
+        
+        // Database persistence
+        await this.userRepository.add(user);
+        
+        // Send welcome email
+        await this.sendGridEmailProvider.sendWelcomeEmail(user.email);
+    }
 
-	public async findUserById(id: string): Promise<UserDto> {
-		return this.userRepository.findById(id);
-	}
+    public async findUserById(id: string): Promise<UserDto> {
+        return this.userRepository.findById(id);
+    }
 }
 ```
 We now have a fully working class, and in a world where we don't care about testability or writing clean code by any manner of the definition at all, and in a world where technical debt is non-existent and pesky program managers don't set deadlines, this is perfectly fine. Unfortunately, that's not a world we have the benefit of living in. 
@@ -177,35 +177,35 @@ import { UserRepository }  from  './UserRepository.ts';
 import { SendGridEmailProvider } from './SendGridEmailProvider.ts';
 
 class UserService {
-	private readonly userRepository: UserRepository;
-	private readonly sendGridEmailProvider: SendGridEmailProvider;
+    private readonly userRepository: UserRepository;
+    private readonly sendGridEmailProvider: SendGridEmailProvider;
 
     public constructor (
-		userRepository: UserRepository,
-		sendGridEmailProvider: SendGridEmailProvider
-	) {
-		// Yay! Dependencies are injected
-	    this.userRepository = userRepository;
-	    this.sendGridEmailProvider = sendGridEmailProvider;
+        userRepository: UserRepository,
+        sendGridEmailProvider: SendGridEmailProvider
+    ) {
+        // Yay! Dependencies are injected
+        this.userRepository = userRepository;
+        this.sendGridEmailProvider = sendGridEmailProvider;
     }
 
-	public async registerUser(dto: IRegisterUserDto): Promise<void> {
-		// User object & validation
-		const user = User.fromDto(dto);
+    public async registerUser(dto: IRegisterUserDto): Promise<void> {
+        // User object & validation
+        const user = User.fromDto(dto);
 
-		if (await this.userRepository.existsByEmail(dto.email))
-			return Promise.reject(new DuplicateEmailError());
-		
-		// Database persistence
-		await this.userRepository.add(user);
-		
-		// Send welcome email
-		await this.sendGridEmailProvider.sendWelcomeEmail(user.email);
-	}
+        if (await this.userRepository.existsByEmail(dto.email))
+            return Promise.reject(new DuplicateEmailError());
+        
+        // Database persistence
+        await this.userRepository.add(user);
+        
+        // Send welcome email
+        await this.sendGridEmailProvider.sendWelcomeEmail(user.email);
+    }
 
-	public async findUserById(id: string): Promise<UserDto> {
-		return this.userRepository.findById(id);
-	}
+    public async findUserById(id: string): Promise<UserDto> {
+        return this.userRepository.findById(id);
+    }
 }
 ```
 Great - now `UserService` receives pre-instantiated objects, and whichever piece of code calls and creates a new `UserService` is in charge of controlling the lifetime of the dependencies. We've inverted control away from `UserService` and up to a higher level. If I only wanted to show how we could inject dependencies through the constructor as to explain the basic tenant of dependency injection, I could stop here. There are still some problems from a design perspective, however, which when changed, will serve to make our use of dependency injection all the more powerful.
@@ -220,23 +220,23 @@ This isn't great because we want `UserService` to be completely agnostic to the 
 import { dbDriver } from 'pg-driver';
 
 export interface IUserRepository {
-	addUser(user: User): Promise<void>;
-	findUserById(id: string): Promise<User>;
-	existsByEmail(email: string): Promise<bool>;
+    addUser(user: User): Promise<void>;
+    findUserById(id: string): Promise<User>;
+    existsByEmail(email: string): Promise<bool>;
 }
 
 export class UserRepository implements IUserRepository {
-	public async addUser(user: User): Promise<void> {
-		// ... dbDriver.save(...)
-	}
+    public async addUser(user: User): Promise<void> {
+        // ... dbDriver.save(...)
+    }
 
-	public async findUserById(id: string): Promise<User> {
-		// ... dbDriver.query(...)
-	}
+    public async findUserById(id: string): Promise<User> {
+        // ... dbDriver.query(...)
+    }
 
-	public async existsByEmail(email: string): Promise<boolean> {
-		// ... dbDriver.save(...)
-	}
+    public async existsByEmail(email: string): Promise<boolean> {
+        // ... dbDriver.save(...)
+    }
 }
 ```
 Define one for the email provider:
@@ -244,7 +244,7 @@ Define one for the email provider:
 ```typescript
 // IEmailProvider.ts
 export interface IEmailProvider {
-	sendWelcomeEmail(to: string): Promise<void>;
+    sendWelcomeEmail(to: string): Promise<void>;
 }
 
 // SendGridEmailProvider.ts
@@ -253,8 +253,8 @@ import { IEmailProvider } from './IEmailProvider';
 
 export class SendGridEmailProvider implements IEmailProvider {
     public async sendWelcomeEmail(to: string): Promise<void> {
-		// ... await sendMail(...);
-	}
+        // ... await sendMail(...);
+    }
 }
 ```
 ***Note:** This is the Adapter Pattern from the Gang of Four Design Patterns.*
@@ -266,35 +266,35 @@ import { IUserRepository }  from  './UserRepository.ts';
 import { IEmailProvider } from './SendGridEmailProvider.ts';
 
 class UserService {
-	private readonly userRepository: IUserRepository;
-	private readonly emailProvider: IEmailProvider;
+    private readonly userRepository: IUserRepository;
+    private readonly emailProvider: IEmailProvider;
 
     public constructor (
-		userRepository: IUserRepository,
-		emailProvider: IEmailProvider
-	) {
-		// Double yay! Injecting dependencies and coding against interfaces.
-	    this.userRepository = userRepository;
-	    this.emailProvider = emailProvider;
+        userRepository: IUserRepository,
+        emailProvider: IEmailProvider
+    ) {
+        // Double yay! Injecting dependencies and coding against interfaces.
+        this.userRepository = userRepository;
+        this.emailProvider = emailProvider;
     }
 
-	public async registerUser(dto: IRegisterUserDto): Promise<void> {
-		// User object & validation
-		const user = User.fromDto(dto);
+    public async registerUser(dto: IRegisterUserDto): Promise<void> {
+        // User object & validation
+        const user = User.fromDto(dto);
 
-		if (await this.userRepository.existsByEmail(dto.email))
-			return Promise.reject(new DuplicateEmailError());
-		
-		// Database persistence
-		await this.userRepository.add(user);
-		
-		// Send welcome email
-		await this.emailProvider.sendWelcomeEmail(user.email);
-	}
+        if (await this.userRepository.existsByEmail(dto.email))
+            return Promise.reject(new DuplicateEmailError());
+        
+        // Database persistence
+        await this.userRepository.add(user);
+        
+        // Send welcome email
+        await this.emailProvider.sendWelcomeEmail(user.email);
+    }
 
-	public async findUserById(id: string): Promise<User> {
-		return this.userRepository.findById(id);
-	}
+    public async findUserById(id: string): Promise<User> {
+        return this.userRepository.findById(id);
+    }
 }
 ```
 What we've done here is force the various components of our system to *depend on abstractions* and not concrete implementations. It is a common and well-regarded principle of software design to code against interfaces (abstractions) and not implementations. In doing so, you're given the freedom to swap out implementations as you please, for those implementations are hidden behind the interface, and so the business logic that uses the dependency never has to change so long as the interface never changes.
@@ -308,34 +308,34 @@ Additionally, when it comes to testing, we can create fakes that abide by the in
 class FakeUserRepository implements IUserRepository {
     private readonly users: User[] = [];
 
-	public async addUser(user: User): Promise<void> {
-		this.users.push(user);
-	}
+    public async addUser(user: User): Promise<void> {
+        this.users.push(user);
+    }
 
-	public async findUserById(id: string): Promise<User> {
-		const userOrNone = this.users.find(u => u.id === id);
+    public async findUserById(id: string): Promise<User> {
+        const userOrNone = this.users.find(u => u.id === id);
 
-		return userOrNone
-			? Promise.resolve(userOrNone)
-			: Promise.reject(new NotFoundError());
-	}
+        return userOrNone
+            ? Promise.resolve(userOrNone)
+            : Promise.reject(new NotFoundError());
+    }
 
-	public async existsByEmail(email: string): Promise<bool> {
-		return this.users.includes(u => u.email === email);
-	}
+    public async existsByEmail(email: string): Promise<bool> {
+        return this.users.includes(u => u.email === email);
+    }
 
-	public getPeristedUserCount = () => this.users.length;
+    public getPeristedUserCount = () => this.users.length;
 }
 
 class FakeEmailProvider implements IEmailProvider {
-	private readonly emailRecipients: string[] = [];
+    private readonly emailRecipients: string[] = [];
 
-	public async sendWelcomeEmail(to: string): Promise<void> {
-		this.emailRecipients.push(to);
-	}
+    public async sendWelcomeEmail(to: string): Promise<void> {
+        this.emailRecipients.push(to);
+    }
 
-	public wasEmailSentToRecipient = (recipient: string) =>
-		new Boolean(this.emailRecipients.find(r => r === recipient);
+    public wasEmailSentToRecipient = (recipient: string) =>
+        new Boolean(this.emailRecipients.find(r => r === recipient);
 }
 ```
 Notice that both fakes implement the same interfaces that `UserService` expects its dependencies to honor. Now, we can pass these fakes into `UserService` instead of the real classes and `UserService` will be none the wiser, it'll use them just as if they were the real deal. We can inject these two during tests, and it'll make the testing process so much easier and so much more straight forward than what you might be used to when dealing with over-the-top mocking and stubbing libraries, working with Jest's own internal tooling, or trying to monkey-patch.
@@ -352,65 +352,65 @@ let userService: UserService;
 // We want to clean out the internal arrays of both fakes 
 // before each test.
 beforeEach(() => {
-	fakeUserRepository = new FakeUserRepository();
-	fakeEmailProvider = new FakeEmailProvider();
-	
-	userService = new UserService(fakeUserRepository, fakeEmailProvider);
+    fakeUserRepository = new FakeUserRepository();
+    fakeEmailProvider = new FakeEmailProvider();
+    
+    userService = new UserService(fakeUserRepository, fakeEmailProvider);
 });
 
 // A factory to create DTOs
 // Here, we have the optional choice of overriding the defaults
 // thanks to the built in `Partial` utility type of TypeScript
 function createSeedRegisterUserDto(opts?: Partial<IRegisterUserDto>): IRegisterUserDto {
-	return {
-		id: 'someId',
-		email: 'example@domain.com',
-		...opts
-	};
+    return {
+        id: 'someId',
+        email: 'example@domain.com',
+        ...opts
+    };
 }
 
 test('should correctly persist a user and send an email', async () => {
-	// Arrange
-	const dto = createSeedRegisterUserDto();
+    // Arrange
+    const dto = createSeedRegisterUserDto();
 
-	// Act
-	await userService.registerUser(dto);
+    // Act
+    await userService.registerUser(dto);
 
-	// Assert
-	const expectedUser = User.fromDto(dto);
-	const persistedUser = await fakeUserRepository.findById(dto.id);
-	
-	const wasEmailSent = fakeEmailProvider.wasEmailSentToRecipient(dto.email);
+    // Assert
+    const expectedUser = User.fromDto(dto);
+    const persistedUser = await fakeUserRepository.findById(dto.id);
+    
+    const wasEmailSent = fakeEmailProvider.wasEmailSentToRecipient(dto.email);
 
-	expect(persistedUser).toEqual(expectedUser);
-	expect(wasEmailSent).toBe(true);
+    expect(persistedUser).toEqual(expectedUser);
+    expect(wasEmailSent).toBe(true);
 });
 
 test('should reject with a DuplicateEmailError if an email already exists', async () => {
-	// Arrange
-	const existingEmail = 'john.doe@live.com';
-	const dto = createSeedRegisterUserDto({ email: existingEmail });
-	const existingUser = User.fromDto(dto);
-	
-	await fakeUserRepository.addUser(existingUser);
+    // Arrange
+    const existingEmail = 'john.doe@live.com';
+    const dto = createSeedRegisterUserDto({ email: existingEmail });
+    const existingUser = User.fromDto(dto);
+    
+    await fakeUserRepository.addUser(existingUser);
 
-	// Act, Assert
-	await expect(() => userService.registerUser(dto))
-		.rejects.toBeInstanceOf(new DuplicateEmailError());
+    // Act, Assert
+    await expect(() => userService.registerUser(dto))
+        .rejects.toBeInstanceOf(new DuplicateEmailError());
 
-	expect(fakeUserRepository.getPersistedUserCount()).toBe(1);
+    expect(fakeUserRepository.getPersistedUserCount()).toBe(1);
 });
 
 test('should correctly return a user', async () => {
-	// Arrange
-	const user = User.fromDto(createSeedRegisterUserDto());
-	await fakeUserRepository.addUser(user);
+    // Arrange
+    const user = User.fromDto(createSeedRegisterUserDto());
+    await fakeUserRepository.addUser(user);
 
-	// Act
-	const recievedUser = await userService.findById(user.id);
+    // Act
+    const recievedUser = await userService.findById(user.id);
 
-	// Assert
-	expect(recievedUser).toEqual(user);
+    // Assert
+    expect(recievedUser).toEqual(user);
 });
 ```
 You'll notice a few things here - the hand-written fakes are very simple. There's no complexity here from mocking frameworks which only serve to obfuscate. Everything is hand-rolled and that means there is no magic in the codebase. Asynchronous behavior is faked to match the interfaces. I use async/await in the tests even though all behavior is synchronous because I feel that it more closely matches how I'd expect the operations to work in the real world and because by adding async/await, I can run this same test suite against real implementations too in addition to the fakes, thus handing asynchrony appropriately is required. In fact, in real life, I would most likely not even worry about mocking the database and would instead use a local DB in a Docker container until there were so many tests that I had to mock it away for performance. I could then run the in-memory DB tests after every single change and reserve the real local DB tests for right before committing changes and for on the build server in the CI/CD pipeline.
@@ -433,26 +433,26 @@ So far, throughout the article, we've worked exclusively with classes and inject
 
 ```typescript
 async function makeUserService(
-	userRepository: IUserRepository,
-	emailProvider: IEmailProvider
+    userRepository: IUserRepository,
+    emailProvider: IEmailProvider
 ): IUserService {
-	return {
-		registerUser: dto => {
-			// ...
-		},
+    return {
+        registerUser: dto => {
+            // ...
+        },
 
-		findUserById: id => userRepository.findById(id)
-	}
+        findUserById: id => userRepository.findById(id)
+    }
 }
 ```
 We can also inject dependencies into Higher Order Functions. A typical example would be creating an Express Middleware function that gets a `UserRepository` and an `ILogger` injected:
 
 ```typescript
 function authProvider(userRepository: IUserRepository, logger: ILogger) {
-	return async (req: Request, res: Response, next: NextFunction) => {
-		// ...
-		// Has access to userRepository, logger, req, res, and next.
-	}
+    return async (req: Request, res: Response, next: NextFunction) => {
+        // ...
+        // Has access to userRepository, logger, req, res, and next.
+    }
 }
 ```
 In the first example, I didn't define the type of `dto` and `id` because if we define an interface called `IUserService` containing the method signatures for the service, then the TS Compiler will infer the types automatically. Similarly, had I defined a function signature for the Express Middleware to be the return type of `authProvider`, I wouldn't have had to declare the argument types there either.
@@ -463,29 +463,29 @@ If we considered the email provider and the repository to be functional too, and
 import { sendMail } from 'sendgrid';
 
 async function main() {
-	const app = express();
-	
-	const dbConnection = await connectToDatabase();
-	
-	// Change emailProvider to `makeMailChimpEmailProvider` whenever we want
-	// with no changes made to dependent code.
-	const userRepository = makeUserRepository(dbConnection);
-	const emailProvider = makeSendGridEmailProvider(sendMail);
-	
-	const userService = makeUserService(userRepository, emailProvider);
+    const app = express();
+    
+    const dbConnection = await connectToDatabase();
+    
+    // Change emailProvider to `makeMailChimpEmailProvider` whenever we want
+    // with no changes made to dependent code.
+    const userRepository = makeUserRepository(dbConnection);
+    const emailProvider = makeSendGridEmailProvider(sendMail);
+    
+    const userService = makeUserService(userRepository, emailProvider);
 
-	// Put this into another file. It's a controller action.
-	app.post('/login', (req, res) => {
-		await userService.registerUser(req.body as IRegisterUserDto);
-		return res.send();
-	});
+    // Put this into another file. It's a controller action.
+    app.post('/login', (req, res) => {
+        await userService.registerUser(req.body as IRegisterUserDto);
+        return res.send();
+    });
 
-	// Put this into another file. It's a controller action.
-	app.delete(
-		'/me', 
-		authProvider(userRepository, emailProvider), 
-		(req, res) => { ... }
-	);
+    // Put this into another file. It's a controller action.
+    app.delete(
+        '/me', 
+        authProvider(userRepository, emailProvider), 
+        (req, res) => { ... }
+    );
 }
 ```
 Notice that we fetch the dependencies that we need, like a database connection or third-party library functions, and then we utilize factories to make our first-party dependencies using the third-party ones. We then pass them into the dependent code. Since everything is coded against abstractions, I can swap out either `userRepository` or `emailProvider` to be any different function or class with any implementation I want and `UserService` will just use it with no changes needed, which, once again, is because `UserService` cares about nothing but the public interface of the dependencies, not how the dependencies actually work.
