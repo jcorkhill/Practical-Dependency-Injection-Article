@@ -326,11 +326,11 @@ class FakeUserRepository implements IUserRepository {
             : Promise.reject(new NotFoundError());
     }
 
-    public async existsByEmail(email: string): Promise<bool> {
-        return this.users.includes(u => u.email === email);
+    public async existsByEmail(email: string): Promise<boolean> {
+        return Boolean(this.users.find(u => u.email === email));
     }
 
-    public getPeristedUserCount = () => this.users.length;
+    public getPersistedUserCount = () => this.users.length;
 }
 
 class FakeEmailProvider implements IEmailProvider {
