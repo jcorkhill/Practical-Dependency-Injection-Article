@@ -155,7 +155,7 @@ class UserService {
             return Promise.reject(new DuplicateEmailError());
         
         // Database persistence
-        await this.userRepository.add(user);
+        await this.userRepository.addUser(user);
         
         // Send welcome email
         await this.sendGridEmailProvider.sendWelcomeEmail(user.email);
@@ -197,7 +197,7 @@ class UserService {
             return Promise.reject(new DuplicateEmailError());
         
         // Database persistence
-        await this.userRepository.add(user);
+        await this.userRepository.addUser(user);
         
         // Send welcome email
         await this.sendGridEmailProvider.sendWelcomeEmail(user.email);
@@ -288,7 +288,7 @@ class UserService {
             return Promise.reject(new DuplicateEmailError());
         
         // Database persistence
-        await this.userRepository.add(user);
+        await this.userRepository.addUser(user);
         
         // Send welcome email
         await this.emailProvider.sendWelcomeEmail(user.email);
