@@ -386,7 +386,7 @@ test('should correctly persist a user and send an email', async () => {
 
     // Assert
     const expectedUser = User.fromDto(dto);
-    const persistedUser = await fakeUserRepository.findById(dto.id);
+    const persistedUser = await fakeUserRepository.findUserById(dto.id);
     
     const wasEmailSent = fakeEmailProvider.wasEmailSentToRecipient(dto.email);
 
@@ -415,10 +415,10 @@ test('should correctly return a user', async () => {
     await fakeUserRepository.addUser(user);
 
     // Act
-    const recievedUser = await userService.findById(user.id);
+    const receivedUser = await userService.findUserById(user.id);
 
     // Assert
-    expect(recievedUser).toEqual(user);
+    expect(receivedUser).toEqual(user);
 });
 ```
 You'll notice a few things here - the hand-written fakes are very simple. There's no complexity from mocking frameworks which only serve to obfuscate. Everything is hand-rolled and that means there is no magic in the codebase. Asynchronous behavior is faked to match the interfaces. I use async/await in the tests even though all behavior is synchronous because I feel that it more closely matches how I'd expect the operations to work in the real world and because by adding async/await, I can run this same test suite against real implementations too in addition to the fakes, thus handing asynchrony appropriately is required. In fact, in real life, I would most likely not even worry about mocking the database and would instead use a local DB in a Docker container until there were so many tests that I had to mock it away for performance. I could then run the in-memory DB tests after every single change and reserve the real local DB tests for right before committing changes and for on the build server in the CI/CD pipeline.
